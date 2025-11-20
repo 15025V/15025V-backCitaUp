@@ -32,8 +32,30 @@ export async function registerDoctor(req: Request, res: Response) {
         
       },
     });
+    const token =jwt.sign(
+      { 
+        id: doctor.id, 
+        nombre: doctor.nombre, 
+        apellidos: doctor.apellidos,  
+        correo: doctor.correo, 
+        telefono: doctor.telefono 
+      },
+      process.env.JWT_SECRET || "claveSecreta",
+      { expiresIn: "8h" }
+    );
 
-    res.status(201).json({ doctor });
+    res.status(201).json({
+      success: true,
+      message: "Registro exitoso",
+      doctor: {
+        id: doctor.id,
+        nombre: doctor.nombre,
+        apellidos: doctor.apellidos,
+        correo: doctor.correo,
+        telefono: doctor.telefono,
+      },
+      token,
+    });
   } catch (error) {
     console.error("Error en registerDoctor:", error);
     res.status(500).json({ error: "Error interno del servidor" });
