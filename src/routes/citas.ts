@@ -7,6 +7,7 @@ import {
 
   eliminarCita,
 } from  '../controllers/citaController'
+import { verifyToken } from "../middlewares/auth";
 
 const router = Router();
 
@@ -14,9 +15,9 @@ const router = Router();
 router.post("/citas", crearCitaPaciente);
 
 // Doctor   
-router.get("/doctor/citas", getCitasDoctor);
-router.post("/doctor/citas", crearCitaDoctor);
-router.put("/doctor/citas/:id", confirmarCita);
-router.delete("/doctor/citas/:id", eliminarCita);
+router.get("/doctor/citas", verifyToken, getCitasDoctor);
+router.post("/doctor/citas", verifyToken, crearCitaDoctor);
+router.put("/doctor/citas/:id", verifyToken, confirmarCita);
+router.delete("/doctor/citas/:id", verifyToken, eliminarCita);
 
 export default router;  

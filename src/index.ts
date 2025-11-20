@@ -9,8 +9,10 @@ dotenv.config()
 const app = express()
 const PORT = process.env.PORT || 3100
 
-app.use(cors(
-))
+app.use(cors({
+    origin: (process.env.ALLOWED_ORIGINS || "").split(","),
+    credentials: true,
+}))
 app.use(express.json())
 
 app.use('/auth', authRoutes)
