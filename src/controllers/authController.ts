@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
@@ -12,7 +13,7 @@ export async function registerDoctor(req: Request, res: Response) {
       return res.status(400).json({ error: "Faltan datos" });
     }
 
-    const exists = await prisma.doctor.findUnique({
+    const exists = await prisma.doctor.findUnique({ 
       where: { correo },
     });
 
@@ -25,6 +26,7 @@ export async function registerDoctor(req: Request, res: Response) {
     const doctor = await prisma.doctor.create({
       data: {
         nombre,
+        apellidos,
         correo,
         password: hashed,
         
@@ -56,14 +58,24 @@ export async function login(req: Request, res: Response) {
       return res.status(401).json({ error: "Credenciales incorrectas" });
     }
 
+    //Para generar el token JWT haber si no truena 
+    const token =jwt.sign(
+      { id: doctor.id, nombre: doctor.nombre, apellidos: doctor.apellidos, correo: doctor.correo, telefono: doctor.telefono },
+      process.env.JWT_SECRET || "claveSecreta",
+      { expiresIn: "8h" }
+    );
+
     res.json({
+      success: true,
       message: "Inicio de sesión correcto",
       doctor: {
         id: doctor.id,
         nombre: doctor.nombre,
+        apellidos: doctor.apellidos,
         correo: doctor.correo,
         telefono: doctor.telefono,
       },
+      token,
     });
   } catch (error) {
     console.error("Error en login:", error);
