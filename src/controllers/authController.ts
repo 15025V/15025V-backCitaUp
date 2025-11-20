@@ -82,7 +82,12 @@ export async function login(req: Request, res: Response) {
 
     //Para generar el token JWT haber si no truena 
     const token =jwt.sign(
-      { id: doctor.id, nombre: doctor.nombre, apellidos: doctor.apellidos, correo: doctor.correo, telefono: doctor.telefono },
+      { 
+        id: doctor.id,
+         nombre: doctor.nombre, 
+         apellidos: doctor.apellidos, 
+         correo: doctor.correo, 
+         telefono: doctor.telefono },
       process.env.JWT_SECRET || "claveSecreta",
       { expiresIn: "8h" }
     );

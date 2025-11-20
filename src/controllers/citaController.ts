@@ -79,12 +79,14 @@ export async function crearCitaPaciente(req: Request, res: Response) {
         return res.status(500).json({ error: "Error interno" });
     }
 }
+
 export async function getCitasDoctor(req: Request, res: Response) {
   try {
-    const { doctorId, estado } = req.query;
+    const { estado } = req.query;
+    const  doctorId  = (req as any).user?.id;
 
     if (!doctorId) {
-      return res.status(400).json({ error: "Falta el ID del doctor" });
+      return res.status(400).json({ error: "Token invalido o Sin ID del doctor" });
     }
 
     const where: any = { doctorId: Number(doctorId) };
