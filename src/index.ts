@@ -9,10 +9,8 @@ dotenv.config()
 const app = express()
 const PORT = process.env.PORT || 3100
 
-app.use(cors({
-    origin: ['http://localhost:3000'], // puedes agregar más dominios si lo necesitas
-    credentials: true,
-}))
+app.use(cors(
+))
 app.use(express.json())
 
 app.use('/auth', authRoutes)

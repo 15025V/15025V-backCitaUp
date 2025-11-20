@@ -114,7 +114,7 @@ export async function getCitasDoctor(req: Request, res: Response) {
 
 
 export async function crearCitaDoctor(req: Request, res: Response) {
-    const doctorId = (req as any).user.id; // viene del token
+    const doctorId = (req as any).user.id; 
     const { nombrePaciente, telefonoPaciente, correoPaciente, fecha, motivo } = req.body;
     try {
         const fechaValida = new Date(fecha);
