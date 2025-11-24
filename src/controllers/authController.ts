@@ -43,6 +43,12 @@ export async function registerDoctor(req: Request, res: Response) {
       process.env.JWT_SECRET || "claveSecreta",
       { expiresIn: "8h" }
     );
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", 
+      sameSite: "strict",
+      maxAge: 8 * 60 * 60 * 1000, // 8 horas
+    });
 
     res.status(201).json({
       success: true,
@@ -54,7 +60,7 @@ export async function registerDoctor(req: Request, res: Response) {
         correo: doctor.correo,
         telefono: doctor.telefono,
       },
-      token,
+      
     });
   } catch (error) {
     console.error("Error en registerDoctor:", error);
@@ -92,6 +98,13 @@ export async function login(req: Request, res: Response) {
       { expiresIn: "8h" }
     );
 
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", 
+      sameSite: "strict",
+      maxAge: 8 * 60 * 60 * 1000, // 8 horas
+    });
+
     res.json({
       success: true,
       message: "Inicio de sesión correcto",
@@ -102,7 +115,7 @@ export async function login(req: Request, res: Response) {
         correo: doctor.correo,
         telefono: doctor.telefono,
       },
-      token,
+      
     });
   } catch (error) {
     console.error("Error en login:", error);

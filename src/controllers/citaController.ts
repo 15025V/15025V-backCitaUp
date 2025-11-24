@@ -89,7 +89,7 @@ export async function getCitasDoctor(req: Request, res: Response) {
       return res.status(400).json({ error: "Token invalido o Sin ID del doctor" });
     }
 
-    const where: any = { doctorId: Number(doctorId) };
+    const where: any = { doctorId };
 
     if (estado) {
       where.estado = String(estado).toUpperCase();
