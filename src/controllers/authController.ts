@@ -45,8 +45,8 @@ export async function registerDoctor(req: Request, res: Response) {
     );
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", 
-      sameSite: "strict",
+      secure: false, 
+      sameSite: "lax",
       maxAge: 8 * 60 * 60 * 1000, // 8 horas
     });
 
@@ -100,8 +100,8 @@ export async function login(req: Request, res: Response) {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", 
-      sameSite: "strict",
+      secure:false, 
+      sameSite: "lax",
       maxAge: 8 * 60 * 60 * 1000, // 8 horas
     });
 
