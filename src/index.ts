@@ -13,7 +13,8 @@ const PORT = process.env.PORT || 3100
 
 
 app.use(cors({
-    origin: (process.env.ALLOWED_ORIGINS || "").split(","),
+    // origin: (process.env.ALLOWED_ORIGINS || "").split(","),
+    origin: true,
     credentials: true,
 }))
 app.use(cookieParser());

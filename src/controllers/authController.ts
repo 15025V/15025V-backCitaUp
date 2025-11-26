@@ -5,6 +5,8 @@ import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
+const isProduction = process.env.NODE_ENV === "production";
+
 export async function registerDoctor(req: Request, res: Response) {
   try {
     const { nombre, apellidos, correo, password } = req.body;
@@ -45,8 +47,8 @@ export async function registerDoctor(req: Request, res: Response) {
     );
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false, 
-      sameSite: "lax",
+      secure: isProduction, 
+      sameSite: isProduction ? "none" : "lax",
       maxAge: 8 * 60 * 60 * 1000, // 8 horas
     });
 
@@ -100,8 +102,8 @@ export async function login(req: Request, res: Response) {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure:false, 
-      sameSite: "lax",
+      secure: isProduction, 
+      sameSite: isProduction ? "none" : "lax",
       maxAge: 8 * 60 * 60 * 1000, // 8 horas
     });
 
