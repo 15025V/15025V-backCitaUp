@@ -2,7 +2,7 @@ import { Router } from "express";
 import { login, registerDoctor } from "../controllers/authController";
 import { logout } from "../controllers/logout";
 import jwt from "jsonwebtoken";
-import { verifyToken } from "../middlewares/auth";
+
 
 const router = Router();
 
