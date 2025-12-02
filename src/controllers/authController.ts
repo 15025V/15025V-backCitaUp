@@ -39,8 +39,8 @@ export async function registerDoctor(req: Request, res: Response) {
         id: doctor.id, 
         nombre: doctor.nombre, 
         apellidos: doctor.apellidos,  
-        correo: doctor.correo, 
-        telefono: doctor.telefono 
+        // correo: doctor.correo, 
+        // telefono: doctor.telefono 
       },
       process.env.JWT_SECRET || "claveSecreta",
       { expiresIn: "8h" }
@@ -59,8 +59,8 @@ export async function registerDoctor(req: Request, res: Response) {
         id: doctor.id,
         nombre: doctor.nombre,
         apellidos: doctor.apellidos,
-        correo: doctor.correo,
-        telefono: doctor.telefono,
+        // correo: doctor.correo,
+        // telefono: doctor.telefono,
       },
       
     });
@@ -94,8 +94,9 @@ export async function login(req: Request, res: Response) {
         id: doctor.id,
          nombre: doctor.nombre, 
          apellidos: doctor.apellidos, 
-         correo: doctor.correo, 
-         telefono: doctor.telefono },
+        //  correo: doctor.correo, 
+        //  telefono: doctor.telefono 
+        },
       process.env.JWT_SECRET || "claveSecreta",
       { expiresIn: "8h" }
     );
@@ -114,8 +115,8 @@ export async function login(req: Request, res: Response) {
         id: doctor.id,
         nombre: doctor.nombre,
         apellidos: doctor.apellidos,
-        correo: doctor.correo,
-        telefono: doctor.telefono,
+        // correo: doctor.correo,
+        // telefono: doctor.telefono,
       },
       
     });
