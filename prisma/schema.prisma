@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,21 +11,36 @@ datasource db {
 }
 
 model Doctor {
+  id           Int      @id @default(autoincrement())
+  nombre       String
+  apellidos    String?
+  correo       String   @unique
+  password     String
+  telefono     String?
+  especialidad String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  citas        Cita[]
+}
+
+model Paciente {
   id        Int      @id @default(autoincrement())
   nombre    String
-  apellidos String?
+  apellidos String
   correo    String   @unique
   password  String
   telefono  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  
+  citas     Cita[]
 }
 
 model Cita {
   id               Int        @id @default(autoincrement())
   doctorId         Int
+  pacienteId       Int?
   nombrePaciente   String
   telefonoPaciente String
   correoPaciente   String?
@@ -37,7 +49,8 @@ model Cita {
   estado           EstadoCita @default(PENDIENTE)
   creadoPor        Creador
 
- 
+  doctor    Doctor   @relation(fields: [doctorId], references: [id])
+  paciente  Paciente? @relation(fields: [pacienteId], references: [id])
 }
 
 enum EstadoCita {

@@ -1,13 +1,11 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt"; // más estable en TS/Next
-
-const prisma = new PrismaClient();
+import { prisma } from "../utils/prisma";
+import bcrypt from "bcrypt";
 
 export async function editarPerfilDoctor(req: Request, res: Response) {
   try {
-    const id = Number(req.params.id);
-    const { nombre, apellidos, telefono, correo, password } = req.body;
+    const id = (req as any).user.id;
+    const { nombre, apellidos, telefono, correo, especialidad, password } = req.body;
 
     // 1. Validar que se envíe la contraseña actual
     if (!password) {
@@ -43,6 +41,8 @@ export async function editarPerfilDoctor(req: Request, res: Response) {
       dataToUpdate.correo = correo;
     }
 
+    if (especialidad !== undefined) dataToUpdate.especialidad = especialidad || null;
+
     dataToUpdate.updatedAt = new Date();
 
     // 4. Si no se envió ningún campo editable
@@ -70,7 +70,7 @@ export async function editarPerfilDoctor(req: Request, res: Response) {
 
 export async function cambiarPasswordDoctor(req: Request, res: Response) {
   try {
-    const id = Number(req.params.id);
+    const id = (req as any).user.id;
     const { passwordActual, nuevaPassword, confirmarPassword } = req.body;
 
     if (!nuevaPassword || nuevaPassword.length < 6) {

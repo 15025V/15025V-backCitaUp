@@ -1,41 +1,99 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../utils/prisma";
 
-const prisma = new PrismaClient();
+// Endpoint público: pacientes pueden buscar doctores por especialidad
+export async function getDoctoresPublico(req: Request, res: Response) {
+  try {
+    const { especialidad } = req.query;
 
-// Obtener todos los doctores registrados
+    const where: any = {};
+    if (especialidad) {
+      where.especialidad = {
+        contains: String(especialidad),
+        mode: "insensitive",
+      };
+    }
+
+    const doctors = await prisma.doctor.findMany({
+      where,
+      select: {
+        id: true,
+        nombre: true,
+        apellidos: true,
+        telefono: true,
+        especialidad: true,
+      },
+      orderBy: { nombre: "asc" },
+    });
+
+    const normalizedDoctors = doctors.map((d) => ({
+      id: d.id,
+      name: d.nombre,
+      lastName: d.apellidos,
+      phone: d.telefono,
+      especialidad: d.especialidad,
+    }));
+
+    res.json({ doctors: normalizedDoctors });
+  } catch (error) {
+    console.error("Error en getDoctoresPublico:", error);
+    res.status(500).json({ error: "Error al obtener los doctores" });
+  }
+}
+
+// Endpoint protegido: solo para doctores autenticados
 export async function getDoctores(req: Request, res: Response) {
   try {
-
-    
-    const doctores = await prisma.doctor.findMany({
+    const doctors = await prisma.doctor.findMany({
       select: {
         id: true,
         nombre: true,
         apellidos: true,
         correo: true,
         telefono: true,
+        especialidad: true,
         createdAt: true,
       },
       orderBy: { createdAt: "desc" },
     });
 
-    res.json({ doctores });
+    const normalizedDoctors = doctors.map((d) => ({
+      id: d.id,
+      name: d.nombre,
+      lastName: d.apellidos,
+      email: d.correo,
+      phone: d.telefono,
+      especialidad: d.especialidad,
+      createdAt: d.createdAt,
+    }));
+
+    res.json({ doctors: normalizedDoctors });
   } catch (error) {
-    console.error(error);
+    console.error("Error en getDoctores:", error);
     res.status(500).json({ error: "Error al obtener los doctores" });
   }
 }
+
 export async function eliminarDoctor(req: Request, res: Response) {
-    const id = Number(req.params.id);
+  try {
+    const doctorId = Number(req.params.id);
 
-    await prisma.doctor.delete({ where: { id } });
+    if (Number.isNaN(doctorId)) {
+      return res.status(400).json({ error: "ID inválido" });
+    }
 
-    res.json({ message: "Doctor eliminado" });
+    await prisma.doctor.delete({ where: { id: doctorId } });
+
+    res.status(204).send();
+  } catch (error) {
+    console.error("Error en eliminarDoctor:", error);
+    res.status(500).json({ error: "Error al eliminar el doctor" });
+  }
 }
+
 export async function getPerfilDoctor(req: Request, res: Response) {
   try {
-    const doctorId = (req as any).user.id; //  viene del token
+    const doctorId = (req as any).user.id;
 
     const doctor = await prisma.doctor.findUnique({
       where: { id: doctorId },
@@ -45,6 +103,7 @@ export async function getPerfilDoctor(req: Request, res: Response) {
         apellidos: true,
         correo: true,
         telefono: true,
+        especialidad: true,
         createdAt: true,
       },
     });
@@ -53,7 +112,17 @@ export async function getPerfilDoctor(req: Request, res: Response) {
       return res.status(404).json({ error: "Doctor no encontrado" });
     }
 
-    res.json({ doctor });
+    const normalizedDoctor = {
+      id: doctor.id,
+      name: doctor.nombre,
+      lastName: doctor.apellidos,
+      email: doctor.correo,
+      phone: doctor.telefono,
+      especialidad: doctor.especialidad,
+      createdAt: doctor.createdAt,
+    };
+
+    res.json({ doctor: normalizedDoctor });
   } catch (error) {
     console.error("Error en getPerfilDoctor:", error);
     res.status(500).json({ error: "Error interno del servidor" });
